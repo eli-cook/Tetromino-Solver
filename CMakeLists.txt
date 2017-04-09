@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.3)
+project(tetromino-solver)
+set(CMAKE_CXX_FLAGS "-Wall -std=c++11")
+include_directories(include/)
+file(GLOB sources "src/*.cpp")
+add_executable(tetro ${sources})
