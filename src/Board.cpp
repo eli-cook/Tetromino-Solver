@@ -37,8 +37,11 @@ Board::Board(int row, int column, std::vector<char> pieces, int numPieces) {
 
 void Board::findUpperLeft() {
 	printf("Previous Upper Left: X %d, Y %d\n", upperLeftX, upperLeftY);
+	
+	int startX = upperLeftX;
+
 	for(int y = upperLeftY; y < rows; y++) {
-		for(int x = upperLeftX; x < columns; x++) {
+		for(int x = startX; x < columns; x++) {
 			if(board[y][x] == '-') {
 				upperLeftY = y;
 				upperLeftX = x;
@@ -46,6 +49,7 @@ void Board::findUpperLeft() {
 				return;
 			}
 		}
+		startX = 0;
 	}
 
 	this->solved = true;

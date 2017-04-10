@@ -15,7 +15,8 @@ int TileManager::numRotations(char piece) {
 			piece == '2' )
 		return 2;
 	else if(piece == 'T' ||
-	   		piece == 'L' )
+	   		piece == 'L' ||
+	   		piece == 'P' )
 		return 4;
 	else
 		return 0;
