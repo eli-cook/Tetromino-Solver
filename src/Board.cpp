@@ -14,11 +14,10 @@ void Board::printBoard() {
 		}
 		printf("\n");
 	}
-
-	printf("\n");
 }
 
 Board::Board(int row, int column, std::vector<char> pieces, int numPieces) {
+	//initialize new board to all dashes (-)
 	board = new char *[row];
 	for(int i = 0; i < row; i++) {
 		board[i] = new char[column];
@@ -28,16 +27,15 @@ Board::Board(int row, int column, std::vector<char> pieces, int numPieces) {
 	}
 	this->numPieces = numPieces	;
 	this->pieces = pieces;
+	//default starting location
 	upperLeftY = 0;
 	upperLeftX = 0;
 	rows = row;
 	columns = column;
-	this->solved = false;
+	solved = false;
 }
 
-void Board::findUpperLeft() {
-	printf("Previous Upper Left: X %d, Y %d\n", upperLeftX, upperLeftY);
-	
+void Board::findUpperLeft() {	
 	int startX = upperLeftX;
 
 	for(int y = upperLeftY; y < rows; y++) {
@@ -45,7 +43,6 @@ void Board::findUpperLeft() {
 			if(board[y][x] == '-') {
 				upperLeftY = y;
 				upperLeftX = x;
-				printf("New Upper Left: X %d, Y %d\n", upperLeftX, upperLeftY);
 				return;
 			}
 		}

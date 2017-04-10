@@ -1,0 +1,22 @@
+Eli Cook
+elcook@pdx.edu
+CS 442P
+Assignment 1
+
+In this assignment I was tasked with creating a tetromino solver which would take from standard input, a board size defined by two integers, and a list of tetromino pieces defined by a set of chars. This program works by creating two objects. First, a mutable board object called Board, which contains a board which is a two dimensional array of chars, the list of pieces, and a few other pieces of information used to keep track of the state of the board. Second, a TileManager object that manipulates the board and recursively finds a solution that fits all the tetromino pieces on the board in a jigsaw fashion. 
+The TileManager object solves the board by trying to fit the current piece in the current uppermost left square. Using a list of offsets for each piece at each non-redundant rotation of ninety degrees. Upon placing a tetromino, the algorithm calls the solve function recursively on the smaller set of pieces with the modified board. By constantly recalculating the upper left corner of the board I eliminate any possibility of "bubbles" forming on the board. In addition to this, I added a do-undo mechanic, so that when I hit a dead end branch of recursion for a particular set of moves, I undo my previous move and continue to do this until new configurations and moves are available. 
+Since there is no possibility of "bubbles" when there are no more upper left corners to place pieces in, I have found a solution and I print it out. I can do this since I error handle for invalid board sizes, invalid number of pieces based on board size, and the maximum limit for both board sizes and number of pieces.
+
+A basic example of a valid input and its output is shown below
+2 2		=>		aa
+O 				aa
+
+By alphabetically following the output shapes you can determine, which type of piece was placed on the board and in which order they were placed.
+
+The solver can be ran using the following steps:
+1. Create build directory "mkdir build"
+2. Change to build directory "cd build"
+3. Run the command "cmake .."
+4. Run the command "make"
+5. Run test 1 on the solver by using the command "cat ../tests/test1-in.txt | ./tetro"
+6. etc..

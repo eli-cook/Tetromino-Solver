@@ -7,8 +7,8 @@ class TileManager {
 public:	
 	TileManager();
 	~TileManager();
-	bool place(char currPiece, Board * board, int rotation, int size);
-	bool solve(Board * board, std::vector<char> pieces);
+	bool place(char currPiece, Board * board, int rotation);
+	bool solve(Board * board);
 	int numRotations(char piece);
 	std::pair<int,int> createPair(int first, int second);
 	std::pair<int,int>* getOffset(char piece, int rotation);

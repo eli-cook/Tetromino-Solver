@@ -7,6 +7,7 @@ TileManager::TileManager() {}
 
 TileManager::~TileManager() {}
 
+//return number of non redundant rotations for each tetromino
 int TileManager::numRotations(char piece) {
 	if(piece == 'O')
 		return 1;
@@ -22,10 +23,11 @@ int TileManager::numRotations(char piece) {
 		return 0;
 }
 
-bool TileManager::place(char currPiece, Board * board, int rotation, int size) {
+bool TileManager::place(char currPiece, Board * board, int rotation) {
 
 	std::pair<int,int> * offset = getOffset(currPiece, rotation);
 
+	//copy information from board that will be repeatedly used.
 	int x = board->upperLeftX;
 	int y = board->upperLeftY;
 	int maxRow = board->rows;
@@ -39,53 +41,48 @@ bool TileManager::place(char currPiece, Board * board, int rotation, int size) {
 			return false;	
 	}
 
-	board->board[y][x] = ('a' + (board->numPieces - size - 1));
+	//Places pieces using offset plus current upper left.
+	board->board[y][x] = ('a' + (board->numPieces - board->pieces.size() - 1));
 	for(int i = 0; i < 3; i++) {
-		board->board[y + offset[i].second][x + offset[i].first] = ('a' + (board->numPieces - size - 1));
+		board->board[y + offset[i].second][x + offset[i].first] = ('a' + (board->numPieces - board->pieces.size() - 1));
 	}
 
+	//cleanup
 	delete[] offset;
 
+	//update placed pieces list for easy undo.
 	placedPiece placed = {currPiece, rotation, x, y};
 	board->placedPieces.push_back(placed);
 
+	//set new upperleft or flip solved flag.
 	board->findUpperLeft();
 	return true;
 }
 
-bool TileManager::solve(Board * board, std::vector<char> pieces) {
-	printf("Pieces: ");
-	for(auto p : pieces)
-		printf("%c", p);
-	printf("\n");
+bool TileManager::solve(Board * board) {
 	if(board->solved)
 		return true;
 
-	int size = pieces.size();
+	int size = board->pieces.size();
 
 	for(int i = 0; i < size; i++) {
-		printf("Pieces: ");
-		for(auto p : pieces)
-			printf("%c", p);
-		printf("\n");
-		char currPiece = pieces[0];
-		pieces.erase(pieces.begin());
+		//grab current piece and remove from list
+		char currPiece = board->pieces[0];
+		board->pieces.erase(board->pieces.begin());
 
+		//try each rotation of the piece and if placed, recursively call
+		//solve on the smaller set of pieces with updated board.
 		for(int j = 0; j < numRotations(currPiece); j++) {
-			if(place(currPiece, board, j, pieces.size())) {
-				printf("placed piece %c\n", currPiece);
-				board->printBoard();
-				if(solve(board, pieces))
+			if(place(currPiece, board, j)) {
+				if(solve(board))
 					return true;
-				printf("undoing last step\n");
+				//if recursive call failed, undo steps until a new configuration can be tried.
 				undo(board);
-			}
-			else {
-				printf("failed to place piece %c\n", currPiece);
 			}
 		}
 
-		pieces.push_back(currPiece);
+		//put piece on back of list of pieces to be used in a different configuration.
+		board->pieces.push_back(currPiece);
 	}
 
 	return false;
@@ -98,7 +95,9 @@ std::pair<int,int> TileManager::createPair(int first, int second) {
 
 	return p;
 }
-
+//returns a list of offsets for each piece and its given rotation where
+//the rotation number represents the number of 90 degree turns.
+//These offsets were calculated by hand.
 std::pair<int,int>* TileManager::getOffset(char piece, int rotation) {
 	std::pair<int,int> * offset = new std::pair<int,int> [3];	
 
@@ -215,13 +214,17 @@ std::pair<int,int>* TileManager::getOffset(char piece, int rotation) {
 	return offset;
 }
 
+//undoes state of board to previous step with the use of the placedPieces vector
 void TileManager::undo(Board * board) {
+	//copy previous step taken and remove it from the placedPieces
 	placedPiece undoPiece = board->placedPieces.back();
 	board->placedPieces.pop_back();
 
+	//reset to previous upper left.
 	board->upperLeftY = undoPiece.upperLeftY;
 	board->upperLeftX = undoPiece.upperLeftX;
 
+	//grab offset for clearing the board of the piece placed last.
 	std::pair<int,int> * offset = getOffset(undoPiece.piece, undoPiece.rotation);
 
 	board->board[undoPiece.upperLeftY][undoPiece.upperLeftX] = '-';
@@ -229,10 +232,3 @@ void TileManager::undo(Board * board) {
 		board->board[undoPiece.upperLeftY + offset[i].second][undoPiece.upperLeftX + offset[i].first] = '-';
 	}
 }
-
-/*
-	given i and j of the corner to place
-	if(piece == 'O')
-		board.board[i][j] = ('a' + (board.numPieces - board.pieceList.size());
-
-*/

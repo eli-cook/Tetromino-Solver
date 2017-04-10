@@ -11,35 +11,45 @@ int main(int argc, char* argv[]) {
 
 	bool found = false;
 
-	int numPieces = 0;
-
 	std::vector<char> piecesList;
 
-	row = getchar() - '0';
-	getchar(); //gets rid of space;
-	column = getchar() - '0';
+	//grab row and column size from stdin
+	scanf("%d %d\n", &row, &column);
 
-	while(getchar() != '\n')
-	getchar(); //gets rid of newline
-
+	//grab pieces from stdin
 	while((ch = getchar()) != EOF) {
 		piecesList.push_back(ch);
-		numPieces++;
 	}
+	//Can't have more than 9 tetrominos. Given constraint.
+	if(piecesList.size() > 9) {
+		printf("?\n");
+		return 0;
+	}
+	//Can't have a board size greater than 36 squares total. Given constraint.
+	if(row * column > 36) {
+		printf("?\n");
+		return 0;
+	}
+	//Must have the correct number of pieces given a specific board size.
+	if(row * column != (int)piecesList.size() * 4) {
+		printf("?\n");
+		return 0;
+	}
+	//initialize board
+	Board * board = new Board(row, column, piecesList, piecesList.size());
 
-	Board * board = new Board(row, column, piecesList, numPieces);
-
+	//initialize tilemanager
 	TileManager * tm = new TileManager();
 
-	board->printBoard();
-
-	found = tm->solve(board, board->pieces);
+	//run solver
+	found = tm->solve(board);
 	
 	if(found)
 		board->printBoard();
 	else
 		printf("?\n");
 
+	//cleanup
 	delete board;
 	delete tm;
 	return 0;

@@ -21,8 +21,8 @@ public:
 	bool solved;
 
 	Board();
-	~Board();
 	Board(int row, int column, std::vector<char> pieces, int numPieces);
+	~Board();
 
 	void printBoard();
 	void findUpperLeft();

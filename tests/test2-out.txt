@@ -1,0 +1,6 @@
+aabbcc
+aabddc
+efbdgc
+effdgg
+efhiig
+ehhhii
