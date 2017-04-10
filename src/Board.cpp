@@ -1,24 +1,52 @@
 //implementations of the Board class
 
 #include "Board.h"
+#include <stdio.h>
 
 
 Board::Board() {}
 Board::~Board() {}
 
-Board::Board(int row, int column, std::vector<char> pieces, int numPieces) {
-	board = new char*[row];
-	for (int i = 0; i < row; i++) {
-		board[i] = new char[column];
+void Board::printBoard() {
+	for(int y = 0; y < rows; y++) {
+		for(int x = 0; x < columns; x++) {
+			printf("%c", board[y][x]);
+		}
+		printf("\n");
 	}
-	board[0][0] = 0;
-	this->numPieces = numPieces	;
-	this->pieces = pieces;
+
+	printf("\n");
 }
 
-bool Board::isSolved() {
-	if(upperLeftX == -1)
-		return true;
-	else
-		return false;
+Board::Board(int row, int column, std::vector<char> pieces, int numPieces) {
+	board = new char *[row];
+	for(int i = 0; i < row; i++) {
+		board[i] = new char[column];
+		for(int j = 0; j < column; j++) {
+			board[i][j] = '-';
+		}
+	}
+	this->numPieces = numPieces	;
+	this->pieces = pieces;
+	upperLeftY = 0;
+	upperLeftX = 0;
+	rows = row;
+	columns = column;
+	this->solved = false;
+}
+
+void Board::findUpperLeft() {
+	printf("Previous Upper Left: X %d, Y %d\n", upperLeftX, upperLeftY);
+	for(int y = upperLeftY; y < rows; y++) {
+		for(int x = upperLeftX; x < columns; x++) {
+			if(board[y][x] == '-') {
+				upperLeftY = y;
+				upperLeftX = x;
+				printf("New Upper Left: X %d, Y %d\n", upperLeftX, upperLeftY);
+				return;
+			}
+		}
+	}
+
+	this->solved = true;
 }

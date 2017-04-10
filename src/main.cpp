@@ -6,7 +6,8 @@
 
 int main(int argc, char* argv[]) {
 
-	char row, column, ch;
+	int row, column; 
+	char ch;
 
 	bool found = false;
 
@@ -14,9 +15,9 @@ int main(int argc, char* argv[]) {
 
 	std::vector<char> piecesList;
 
-	row = getchar();
+	row = getchar() - '0';
 	getchar(); //gets rid of space;
-	column = getchar();
+	column = getchar() - '0';
 
 	while(getchar() != '\n')
 	getchar(); //gets rid of newline
@@ -30,12 +31,16 @@ int main(int argc, char* argv[]) {
 
 	TileManager * tm = new TileManager();
 
-	tm->solve(board);
+	board->printBoard();
+
+	found = tm->solve(board, board->pieces);
 	
 	if(found)
-		printf("Found a solution!\n");
+		board->printBoard();
 	else
 		printf("?\n");
 
+	delete board;
+	delete tm;
 	return 0;
 }
